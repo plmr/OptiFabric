@@ -178,7 +178,10 @@ public class OptifabricSetup implements Runnable {
 
 		Mixins.addConfiguration("optifabric.optifine.mixins.json");
 
-		if (isPresent("cloth-client-events-v0", ">=2.0")) {
+		if (isPresent("fabricloader", ">=0.13.0") && isPresent("cloth-client-events-v0", ">=3.1.61")) {
+			// no mixins are needed -- cloth had a workaround for https://github.com/FabricMC/Mixin/issues/80
+			// but it is now fixed in fabricloader
+		} else if (isPresent("cloth-client-events-v0", ">=2.0")) {
 			if (farPlanePresent.getAsBoolean()) {
 				Mixins.addConfiguration("optifabric.compat.cloth.newer-mixins.json");
 			} else {
@@ -245,7 +248,11 @@ public class OptifabricSetup implements Runnable {
 			}
 
 			if (particlesPresent.getAsBoolean()) {
-				Mixins.addConfiguration("optifabric.compat.carpet.extra-mixins.json");
+				if (isPresent("minecraft", ">=1.18.2")) {
+					Mixins.addConfiguration("optifabric.compat.carpet.extra-new-mixins.json");
+				} else {
+					Mixins.addConfiguration("optifabric.compat.carpet.extra-mixins.json");
+				}
 			}
 		}
 
@@ -315,7 +322,9 @@ public class OptifabricSetup implements Runnable {
 			Mixins.addConfiguration("optifabric.compat.images.mixins.json");
 		}
 
-		if (isPresent("architectury", ">=2.0")) {
+		if (isPresent("architectury", ">=3.7")) {
+			Mixins.addConfiguration("optifabric.compat.architectury-AB.newerer-mixins.json");
+		} else if (isPresent("architectury", ">=2.0")) {
 			assert isPresent("minecraft", ">=1.17-beta.1");
 			if (farPlanePresent.getAsBoolean()) {
 				Mixins.addConfiguration("optifabric.compat.architectury-AB.newer-mixins.json");
@@ -404,7 +413,9 @@ public class OptifabricSetup implements Runnable {
 		}
 
 		if (isPresent("replaymod")) {
-			if (isPresent("minecraft", ">=1.17")) {
+			if (isPresent("minecraft", ">=1.18.1")) {
+				Mixins.addConfiguration("optifabric.compat.replaymod.newer-mixins.json");
+			} else if (isPresent("minecraft", ">=1.17")) {
 				Mixins.addConfiguration("optifabric.compat.replaymod.new-mixins.json");
 			} else {
 				Mixins.addConfiguration("optifabric.compat.replaymod.mixins.json");
